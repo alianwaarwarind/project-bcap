@@ -10,7 +10,7 @@
     
     <style>
         :root {
-            --bg-color: #fdfbf7; /* Cream */
+            --bg-color: #fdfbf7;
             --card-bg: #ffffff;
             --text-main: #5d5d5d;
             --text-light: #888888;
@@ -32,7 +32,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            overflow-x: hidden; /* Prevent horizontal scroll */
+            overflow-x: hidden;
         }
 
         /* --- STAGE 1: KEYPAD --- */
@@ -46,191 +46,116 @@
 
         .instruction-text { font-weight: 600; color: var(--text-light); letter-spacing: 1px; }
 
-        .pin-dots {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 10px;
-        }
-
-        .dot {
-            width: 15px;
-            height: 15px;
-            border-radius: 50%;
-            background: #e0e0e0;
-            transition: all 0.2s;
-        }
+        .pin-dots { display: flex; gap: 15px; margin-bottom: 10px; }
+        .dot { width: 15px; height: 15px; border-radius: 50%; background: #e0e0e0; transition: all 0.2s; }
         .dot.filled { background: var(--accent-lavender); transform: scale(1.2); }
         .dot.error { background: var(--accent-coral); animation: shake 0.3s; }
 
-        .keypad-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-        }
-
+        .keypad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
         .key {
-            background: var(--card-bg);
-            border: none;
-            color: var(--text-main);
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            font-size: 1.5rem;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background: var(--card-bg); border: none; color: var(--text-main);
+            width: 70px; height: 70px; border-radius: 50%; font-size: 1.5rem;
+            font-weight: 600; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            transition: all 0.2s; display: flex; align-items: center; justify-content: center;
         }
-
         .key:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); background: #fff; }
         .key:active { transform: scale(0.95); background: var(--accent-lavender); color: white; }
 
         /* --- STAGE 2: RECEIPT --- */
-        #stage-invoice {
-            display: none;
-            animation: fadeIn 1s ease;
-        }
-
+        #stage-invoice { display: none; animation: fadeIn 1s ease; }
         .receipt-container {
-            background: #fff;
-            padding: 40px;
-            width: 320px;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.08);
-            position: relative;
-            text-align: center;
-            font-family: 'Courier New', Courier, monospace; /* Monospace for receipt feel */
+            background: #fff; padding: 40px; width: 320px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.08); position: relative;
+            text-align: center; font-family: 'Courier New', Courier, monospace;
         }
-
-        /* Jagged Edge Effect */
         .receipt-container::after {
-            content: "";
-            position: absolute;
-            bottom: -10px;
-            left: 0;
-            width: 100%;
-            height: 20px;
+            content: ""; position: absolute; bottom: -10px; left: 0; width: 100%; height: 20px;
             background: linear-gradient(135deg, transparent 50%, white 50%), linear-gradient(45deg, white 50%, transparent 50%);
-            background-size: 20px 20px;
-            background-repeat: repeat-x;
+            background-size: 20px 20px; background-repeat: repeat-x;
         }
-
         .shop-name { font-size: 1.5rem; font-weight: bold; margin-bottom: 5px; letter-spacing: 2px; }
         .receipt-line { border-bottom: 1px dashed #ccc; margin: 20px 0; }
         .item-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.9rem; }
         .total-row { display: flex; justify-content: space-between; font-weight: bold; font-size: 1.2rem; margin-top: 15px; }
-
         .pay-btn {
-            margin-top: 30px;
-            background: var(--accent-coral);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            font-family: var(--font-main);
-            font-weight: 700;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(255, 183, 178, 0.6);
-            transition: transform 0.2s;
+            margin-top: 30px; background: var(--accent-coral); color: white; border: none;
+            padding: 12px 30px; font-family: var(--font-main); font-weight: 700; border-radius: 50px;
+            cursor: pointer; box-shadow: 0 5px 15px rgba(255, 183, 178, 0.6); transition: transform 0.2s;
         }
         .pay-btn:hover { transform: scale(1.05); }
 
         /* --- STAGE 3: DASHBOARD --- */
         #stage-dashboard {
-            display: none;
-            width: 90%;
-            max-width: 1000px;
-            padding: 40px 0;
-            animation: slideUp 1s ease;
+            display: none; width: 90%; max-width: 1000px; padding: 40px 0; animation: slideUp 1s ease;
         }
 
-        header { text-align: center; margin-bottom: 50px; }
+        header { text-align: center; margin-bottom: 40px; }
         h1 { 
-            font-size: 3.5rem; 
-            margin: 0; 
-            color: var(--text-main); 
-            letter-spacing: -1px;
+            font-size: 3.5rem; margin: 0; color: var(--text-main); letter-spacing: -1px;
             background: linear-gradient(120deg, #ffb7b2 0%, #e0c3fc 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
         .subtitle { font-size: 1.1rem; color: var(--text-light); margin-top: 10px; }
 
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
+        /* Music Player Styles */
+        .music-player {
+            margin-top: 20px; display: inline-flex; align-items: center; gap: 10px;
+            background: #fff; padding: 10px 25px; border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
         }
+        .play-icon {
+            width: 30px; height: 30px; background: var(--accent-sage);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            color: white; cursor: pointer; transition: transform 0.2s;
+        }
+        .play-icon:hover { transform: scale(1.1); }
 
-        .card {
-            background: var(--card-bg);
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: var(--shadow);
-            border: 1px solid rgba(0,0,0,0.02);
-        }
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .card { background: var(--card-bg); padding: 30px; border-radius: 20px; box-shadow: var(--shadow); border: 1px solid rgba(0,0,0,0.02); }
+        .card-title { font-size: 0.9rem; font-weight: 700; color: var(--accent-blue); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 20px; }
 
-        .card-title {
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: var(--accent-blue);
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-bottom: 20px;
-        }
-
-        /* Uptime Styles */
-        .uptime-digits {
-            display: flex;
-            justify-content: space-between;
-            font-weight: 700;
-            font-size: 1.3rem;
-            color: var(--text-main);
-        }
+        .uptime-digits { display: flex; justify-content: space-between; font-weight: 700; font-size: 1.3rem; color: var(--text-main); }
         .time-unit { font-size: 0.7rem; color: var(--text-light); font-weight: normal; text-align: center; }
 
-        /* Changelog Styles */
         .changelog-item { margin-bottom: 15px; padding-left: 15px; border-left: 3px solid var(--accent-sage); }
         .changelog-ver { font-weight: 700; color: var(--text-main); }
         .changelog-desc { font-size: 0.9rem; color: var(--text-light); line-height: 1.4; }
 
-        /* Animations */
+        /* Contract Styles */
+        .contract-box {
+            background: #f9f9f9; padding: 15px; border-radius: 10px;
+            font-size: 0.85rem; color: #666; height: 120px; overflow-y: auto;
+            border: 1px solid #eee; margin-bottom: 15px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        .sign-btn {
+            background: var(--accent-lavender); color: white; border: none; padding: 10px 20px;
+            border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; font-family: var(--font-main);
+        }
+        .sign-btn:disabled { background: #ccc; cursor: default; }
+
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } 100% { transform: translateX(0); } }
-
-        /* Mobile Adjustments */
-        @media (max-width: 600px) {
-            h1 { font-size: 2.5rem; }
-            .receipt-container { width: 85%; }
-        }
+        @media (max-width: 600px) { h1 { font-size: 2.5rem; } .receipt-container { width: 85%; } }
     </style>
 </head>
 <body>
 
+    <audio id="bgm" loop>
+        <source src="song.mp3" type="audio/mpeg">
+    </audio>
+
     <div id="stage-keypad">
         <div class="instruction-text">ENTER ACCESS CODE</div>
         <div class="pin-dots" id="pin-dots">
-            <div class="dot"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
+            <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+            <div class="dot"></div><div class="dot"></div><div class="dot"></div>
         </div>
-        
         <div class="keypad-grid">
-            <div class="key" onclick="press(1)">1</div>
-            <div class="key" onclick="press(2)">2</div>
-            <div class="key" onclick="press(3)">3</div>
-            <div class="key" onclick="press(4)">4</div>
-            <div class="key" onclick="press(5)">5</div>
-            <div class="key" onclick="press(6)">6</div>
-            <div class="key" onclick="press(7)">7</div>
-            <div class="key" onclick="press(8)">8</div>
-            <div class="key" onclick="press(9)">9</div>
+            <div class="key" onclick="press(1)">1</div><div class="key" onclick="press(2)">2</div><div class="key" onclick="press(3)">3</div>
+            <div class="key" onclick="press(4)">4</div><div class="key" onclick="press(5)">5</div><div class="key" onclick="press(6)">6</div>
+            <div class="key" onclick="press(7)">7</div><div class="key" onclick="press(8)">8</div><div class="key" onclick="press(9)">9</div>
             <div class="key" onclick="clearPin()" style="font-size:1rem; background:#f9f9f9;">CLR</div>
             <div class="key" onclick="press(0)">0</div>
             <div class="key" onclick="submitPin()" style="color:var(--accent-sage);">➜</div>
@@ -242,26 +167,11 @@
             <div class="shop-name">THE DEBT COLLECTOR</div>
             <div style="font-size: 0.8rem; margin-bottom: 10px;">INVOICE #BDAY-2026</div>
             <div class="receipt-line"></div>
-            
-            <div class="item-row">
-                <span>Friendship Tax</span>
-                <span>$0.00</span>
-            </div>
-            <div class="item-row">
-                <span>Domain Transfer</span>
-                <span>FREE</span>
-            </div>
-            <div class="item-row" style="color: var(--accent-coral); font-weight: bold;">
-                <span>Bottlecaps Owed</span>
-                <span>730.00</span>
-            </div>
-
+            <div class="item-row"><span>Friendship Tax</span><span>$0.00</span></div>
+            <div class="item-row"><span>Domain Transfer</span><span>FREE</span></div>
+            <div class="item-row" style="color: var(--accent-coral); font-weight: bold;"><span>Bottlecaps Owed</span><span>730.00</span></div>
             <div class="receipt-line"></div>
-            <div class="total-row">
-                <span>TOTAL DUE:</span>
-                <span>730 BC</span>
-            </div>
-            
+            <div class="total-row"><span>TOTAL DUE:</span><span>730 BC</span></div>
             <button class="pay-btn" onclick="payDebt()">Clear Dues & Proceed</button>
         </div>
     </div>
@@ -270,13 +180,17 @@
         <header>
             <h1 id="bday-header">Happy Birthday!</h1>
             <div class="subtitle">Welcome to Version <span id="age-target"></span>.0</div>
+            
+            <div class="music-player">
+                <span style="font-size: 0.9rem; color: #888;">Don't forget the music!</span>
+                <div class="play-icon" onclick="toggleMusic(this)">▶</div>
+            </div>
         </header>
 
         <div class="dashboard-grid">
             <div class="card">
                 <div class="card-title">Earth Orbit Timer</div>
-                <div id="uptime-container" class="uptime-digits">
-                    </div>
+                <div id="uptime-container" class="uptime-digits"></div>
             </div>
 
             <div class="card">
@@ -285,26 +199,33 @@
             </div>
 
             <div class="card">
+                <div class="card-title">Terms of Ownership</div>
+                <div class="contract-box">
+                    <strong>CLAUSE 1:</strong> The Entity known as "Jigyasa" (The Owner) hereby accepts full ownership of this domain.<br><br>
+                    <strong>CLAUSE 2:</strong> The Transfer Fee of 1 Million Dollars is hereby waived in honor of "The Birthday Protocol."<br><br>
+                    <strong>CLAUSE 3:</strong> The Owner agrees to be awesome for the next 365 days. No refunds.<br><br>
+                    <strong>GOVERNING LAW:</strong> Friendship Act of 2026.
+                </div>
+                <button id="sign-btn" class="sign-btn" onclick="signContract()">I Accept & Sign</button>
+            </div>
+
+            <div class="card">
                 <div class="card-title">Life Updates (Changelog)</div>
-                <div id="changelog-container">
-                    </div>
+                <div id="changelog-container"></div>
             </div>
         </div>
     </div>
 
     <script>
-        // --- CONFIGURATION ---
         const CONFIG = {
             name: "Jigyasa", 
-            // GENERATE A NEW HASH FOR YOUR 6-DIGIT PIN HERE: https://emn178.github.io/online-tools/sha256.html
-            pinHash: "2a1e3d5f537ebd5fed5b47da6cbc661a791d30b79a64cd8394bdbd48944bebdf", 
-            
+            pinHash: "2a1e3d5f537ebd5fed5b47da6cbc661a791d30b79a64cd8394bdbd48944bebdf", // PASTE YOUR 6-DIGIT HASH HERE
             birthDate: "2000-01-31", 
             age: 25,          
-            stats: [50, 30, 15, 5] // [Sass, Bottlecaps, Genius, Patience]
+            stats: [50, 30, 15, 5] 
         };
 
-        // --- HASHING FUNCTION ---
+        // --- HASHING ---
         async function sha256(message) {
             const msgBuffer = new TextEncoder().encode(message);
             const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
@@ -312,103 +233,76 @@
             return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
-        // --- KEYPAD LOGIC ---
+        // --- KEYPAD ---
         let currentPin = "";
-        
         document.getElementById('age-target').innerText = CONFIG.age;
 
-        function press(num) {
-            if (currentPin.length < 6) {
-                currentPin += num;
-                updateDots();
-            }
-        }
-
-        function clearPin() {
-            currentPin = "";
-            updateDots();
-        }
-
+        function press(num) { if (currentPin.length < 6) { currentPin += num; updateDots(); } }
+        function clearPin() { currentPin = ""; updateDots(); }
         function updateDots() {
-            const dots = document.querySelectorAll('.dot');
-            dots.forEach((dot, index) => {
-                if (index < currentPin.length) {
-                    dot.classList.add('filled');
-                } else {
-                    dot.classList.remove('filled');
-                    dot.classList.remove('error');
-                }
+            document.querySelectorAll('.dot').forEach((dot, index) => {
+                if (index < currentPin.length) dot.classList.add('filled');
+                else { dot.classList.remove('filled'); dot.classList.remove('error'); }
             });
         }
         
         async function submitPin() {
             if (currentPin.length !== 6) return;
-
             const inputHash = await sha256(currentPin);
-            
             if (inputHash === CONFIG.pinHash) {
-                // Success Transition
                 document.getElementById('stage-keypad').style.display = 'none';
                 document.getElementById('stage-invoice').style.display = 'block';
             } else {
-                // Error Animation
-                const dots = document.querySelectorAll('.dot');
-                dots.forEach(dot => dot.classList.add('error'));
-                setTimeout(() => {
-                    clearPin();
-                }, 500);
+                document.querySelectorAll('.dot').forEach(dot => dot.classList.add('error'));
+                setTimeout(() => clearPin(), 500);
             }
         }
 
-        // --- INVOICE & CONFETTI ---
+        // --- INVOICE & MUSIC ---
         function payDebt() {
-            // Confetti Cannon
-            var duration = 3 * 1000;
-            var end = Date.now() + duration;
-
+            var end = Date.now() + 3000;
             (function frame() {
-                confetti({
-                    particleCount: 5,
-                    angle: 60,
-                    spread: 55,
-                    origin: { x: 0 },
-                    colors: ['#e0c3fc', '#b7e4c7', '#ffb7b2'] // Pastel confetti
-                });
-                confetti({
-                    particleCount: 5,
-                    angle: 120,
-                    spread: 55,
-                    origin: { x: 1 },
-                    colors: ['#e0c3fc', '#b7e4c7', '#ffb7b2']
-                });
-
-                if (Date.now() < end) {
-                    requestAnimationFrame(frame);
-                }
+                confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#e0c3fc', '#b7e4c7', '#ffb7b2'] });
+                confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#e0c3fc', '#b7e4c7', '#ffb7b2'] });
+                if (Date.now() < end) requestAnimationFrame(frame);
             }());
 
-            // Transition
             document.getElementById('stage-invoice').style.display = 'none';
             document.getElementById('stage-dashboard').style.display = 'block';
             
-            initChart();
-            startUptime();
-            renderChangelog();
+            initChart(); startUptime(); renderChangelog();
         }
 
-        // --- DASHBOARD FUNCTIONS ---
+        function toggleMusic(btn) {
+            const audio = document.getElementById('bgm');
+            if (audio.paused) {
+                audio.play();
+                btn.innerText = "⏸";
+            } else {
+                audio.pause();
+                btn.innerText = "▶";
+            }
+        }
+
+        function signContract() {
+            const btn = document.getElementById('sign-btn');
+            btn.innerText = "SIGNED & SEALED ✓";
+            btn.style.background = "#b7e4c7";
+            btn.disabled = true;
+            confetti({ particleCount: 30, spread: 70, origin: { y: 0.6 } });
+        }
+
+        // --- DASHBOARD ---
         function startUptime() {
             const birth = new Date(CONFIG.birthDate);
             setInterval(() => {
                 const now = new Date();
                 const diff = now - birth;
-                
                 const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
                 const days = Math.floor((diff % (1000 * 60 * 60 * 24 * 365.25)) / (1000 * 60 * 60 * 24));
                 const hours = now.getHours();
                 const mins = now.getMinutes();
                 const secs = now.getSeconds();
-
                 document.getElementById('uptime-container').innerHTML = `
                     <div style="text-align:center">${years}<div class="time-unit">YEARS</div></div>
                     <div style="text-align:center">${days}<div class="time-unit">DAYS</div></div>
@@ -425,37 +319,21 @@
                 type: 'doughnut',
                 data: {
                     labels: ['Sass', 'Bottlecaps', 'Genius', 'Patience'],
-                    datasets: [{
-                        data: CONFIG.stats,
-                        backgroundColor: ['#e0c3fc', '#b7e4c7', '#ffb7b2', '#a2d2ff'],
-                        borderWidth: 0,
-                        hoverOffset: 10
-                    }]
+                    datasets: [{ data: CONFIG.stats, backgroundColor: ['#e0c3fc', '#b7e4c7', '#ffb7b2', '#a2d2ff'], borderWidth: 0, hoverOffset: 10 }]
                 },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20, font: {family: 'Quicksand'} } }
-                    }
-                }
+                options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20, font: {family: 'Quicksand'} } } } }
             });
         }
 
         function renderChangelog() {
             const notes = [
-                { ver: `v${CONFIG.age}.0`, desc: "Stable Release. Added +1 Wisdom & improved style algorithms." },
+                { ver: `v${CONFIG.age}.0`, desc: "Stable Release. Added +1 Wisdom." },
                 { ver: `v${CONFIG.age - 1}.0`, desc: "Legacy version. Deprecated 'Quarter Life Crisis' module." },
                 { ver: "v1.0", desc: "Initial Launch. Hello World." }
             ];
-            
             const container = document.getElementById('changelog-container');
             notes.forEach(note => {
-                container.innerHTML += `
-                    <div class="changelog-item">
-                        <div class="changelog-ver">${note.ver}</div>
-                        <div class="changelog-desc">${note.desc}</div>
-                    </div>
-                `;
+                container.innerHTML += `<div class="changelog-item"><div class="changelog-ver">${note.ver}</div><div class="changelog-desc">${note.desc}</div></div>`;
             });
         }
     </script>
