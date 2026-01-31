@@ -3,30 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>System Access Required</title>
+    <title>Jigyasa's Birthday</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --bg-color: #0a0a0a;
-            --text-color: #e0e0e0;
-            --accent-color: #00ff9d; /* Neon Green */
-            --error-color: #ff3366;
-            --panel-bg: #111;
-            --font-main: 'Courier New', Courier, monospace;
+            --bg-color: #fdfbf7; /* Cream */
+            --card-bg: #ffffff;
+            --text-main: #5d5d5d;
+            --text-light: #888888;
+            --accent-lavender: #e0c3fc;
+            --accent-sage: #b7e4c7;
+            --accent-coral: #ffb7b2;
+            --accent-blue: #a2d2ff;
+            --shadow: 0 10px 30px rgba(0,0,0,0.05);
+            --font-main: 'Quicksand', sans-serif;
         }
 
         body {
             background-color: var(--bg-color);
-            color: var(--text-color);
+            color: var(--text-main);
             font-family: var(--font-main);
             margin: 0;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
+            overflow-x: hidden; /* Prevent horizontal scroll */
         }
 
         /* --- STAGE 1: KEYPAD --- */
@@ -34,157 +40,187 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
+            gap: 25px;
             animation: fadeIn 1s ease;
         }
 
-        .screen {
-            background: #000;
-            border: 1px solid #333;
-            color: var(--accent-color);
-            padding: 15px;
-            width: 200px;
-            text-align: center;
-            font-size: 1.5rem;
-            letter-spacing: 5px;
+        .instruction-text { font-weight: 600; color: var(--text-light); letter-spacing: 1px; }
+
+        .pin-dots {
+            display: flex;
+            gap: 15px;
             margin-bottom: 10px;
-            box-shadow: 0 0 10px rgba(0, 255, 157, 0.2);
         }
+
+        .dot {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            transition: all 0.2s;
+        }
+        .dot.filled { background: var(--accent-lavender); transform: scale(1.2); }
+        .dot.error { background: var(--accent-coral); animation: shake 0.3s; }
 
         .keypad-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
+            gap: 15px;
         }
 
         .key {
-            background: var(--panel-bg);
-            border: 1px solid #333;
-            color: #fff;
-            padding: 20px;
-            font-size: 1.2rem;
+            background: var(--card-bg);
+            border: none;
+            color: var(--text-main);
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            font-weight: 600;
             cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
             transition: all 0.2s;
-            width: 60px;
-            text-align: center;
-            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .key:hover { background: #222; border-color: var(--accent-color); }
-        .key:active { background: var(--accent-color); color: #000; }
+        .key:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); background: #fff; }
+        .key:active { transform: scale(0.95); background: var(--accent-lavender); color: white; }
 
-        /* --- STAGE 2: INVOICE --- */
+        /* --- STAGE 2: RECEIPT --- */
         #stage-invoice {
             display: none;
-            text-align: center;
-            max-width: 600px;
             animation: fadeIn 1s ease;
         }
 
-        .invoice-box {
-            border: 2px dashed var(--error-color);
+        .receipt-container {
+            background: #fff;
             padding: 40px;
-            background: #1a0505;
+            width: 320px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.08);
             position: relative;
+            text-align: center;
+            font-family: 'Courier New', Courier, monospace; /* Monospace for receipt feel */
         }
 
-        .debt-title { font-size: 2rem; color: var(--error-color); margin-bottom: 10px; }
-        .debt-amount { font-size: 4rem; font-weight: bold; margin: 20px 0; }
-        
+        /* Jagged Edge Effect */
+        .receipt-container::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            background: linear-gradient(135deg, transparent 50%, white 50%), linear-gradient(45deg, white 50%, transparent 50%);
+            background-size: 20px 20px;
+            background-repeat: repeat-x;
+        }
+
+        .shop-name { font-size: 1.5rem; font-weight: bold; margin-bottom: 5px; letter-spacing: 2px; }
+        .receipt-line { border-bottom: 1px dashed #ccc; margin: 20px 0; }
+        .item-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.9rem; }
+        .total-row { display: flex; justify-content: space-between; font-weight: bold; font-size: 1.2rem; margin-top: 15px; }
+
         .pay-btn {
-            background: var(--error-color);
+            margin-top: 30px;
+            background: var(--accent-coral);
             color: white;
             border: none;
-            padding: 15px 30px;
-            font-size: 1.2rem;
+            padding: 12px 30px;
             font-family: var(--font-main);
+            font-weight: 700;
+            border-radius: 50px;
             cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            animation: pulse 2s infinite;
+            box-shadow: 0 5px 15px rgba(255, 183, 178, 0.6);
+            transition: transform 0.2s;
         }
+        .pay-btn:hover { transform: scale(1.05); }
 
         /* --- STAGE 3: DASHBOARD --- */
         #stage-dashboard {
             display: none;
             width: 90%;
             max-width: 1000px;
-            height: 90vh;
-            overflow-y: auto;
+            padding: 40px 0;
             animation: slideUp 1s ease;
-            padding-bottom: 50px;
         }
 
-        /* Custom Scrollbar for Dashboard */
-        #stage-dashboard::-webkit-scrollbar { width: 8px; }
-        #stage-dashboard::-webkit-scrollbar-track { background: #000; }
-        #stage-dashboard::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
-
-        header {
-            text-align: center;
-            margin-bottom: 40px;
-            margin-top: 20px;
+        header { text-align: center; margin-bottom: 50px; }
+        h1 { 
+            font-size: 3.5rem; 
+            margin: 0; 
+            color: var(--text-main); 
+            letter-spacing: -1px;
+            background: linear-gradient(120deg, #ffb7b2 0%, #e0c3fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-
-        h1 { font-size: 3rem; margin: 0; text-transform: uppercase; letter-spacing: 5px; color: var(--accent-color); }
-        .subtitle { color: #666; font-size: 1rem; margin-top: 10px; }
+        .subtitle { font-size: 1.1rem; color: var(--text-light); margin-top: 10px; }
 
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+            gap: 30px;
         }
 
         .card {
-            background: var(--panel-bg);
-            border: 1px solid #333;
-            padding: 20px;
-            border-radius: 5px;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(0,0,0,0.02);
         }
 
         .card-title {
-            color: #888;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--accent-blue);
             text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #333;
-            padding-bottom: 5px;
+            letter-spacing: 1.5px;
+            margin-bottom: 20px;
         }
 
-        /* Uptime Counter Styles */
+        /* Uptime Styles */
         .uptime-digits {
-            font-size: 1.2rem;
             display: flex;
             justify-content: space-between;
-            font-variant-numeric: tabular-nums;
-            font-weight: bold;
-            color: #fff;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: var(--text-main);
         }
-        
+        .time-unit { font-size: 0.7rem; color: var(--text-light); font-weight: normal; text-align: center; }
+
         /* Changelog Styles */
-        .changelog-item { margin-bottom: 15px; border-left: 2px solid var(--accent-color); padding-left: 10px; }
-        .changelog-ver { color: var(--accent-color); font-weight: bold; margin-bottom: 4px; }
-        .changelog-desc { font-size: 0.9rem; color: #ccc; }
+        .changelog-item { margin-bottom: 15px; padding-left: 15px; border-left: 3px solid var(--accent-sage); }
+        .changelog-ver { font-weight: 700; color: var(--text-main); }
+        .changelog-desc { font-size: 0.9rem; color: var(--text-light); line-height: 1.4; }
 
         /* Animations */
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        
-        /* Responsive Tweaks */
+        @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } 100% { transform: translateX(0); } }
+
+        /* Mobile Adjustments */
         @media (max-width: 600px) {
-            h1 { font-size: 2rem; }
-            .debt-amount { font-size: 3rem; }
-            .uptime-digits { font-size: 1rem; }
+            h1 { font-size: 2.5rem; }
+            .receipt-container { width: 85%; }
         }
     </style>
 </head>
 <body>
 
     <div id="stage-keypad">
-        <div style="margin-bottom: 10px; color: #555;">SECURITY CHECKPOINT</div>
-        <div class="screen" id="pin-display">_ _ _ _</div>
+        <div class="instruction-text">ENTER ACCESS CODE</div>
+        <div class="pin-dots" id="pin-dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+        
         <div class="keypad-grid">
             <div class="key" onclick="press(1)">1</div>
             <div class="key" onclick="press(2)">2</div>
@@ -195,43 +231,61 @@
             <div class="key" onclick="press(7)">7</div>
             <div class="key" onclick="press(8)">8</div>
             <div class="key" onclick="press(9)">9</div>
-            <div class="key" onclick="clearPin()">C</div>
+            <div class="key" onclick="clearPin()" style="font-size:1rem; background:#f9f9f9;">CLR</div>
             <div class="key" onclick="press(0)">0</div>
-            <div class="key" onclick="submitPin()">⏎</div>
+            <div class="key" onclick="submitPin()" style="color:var(--accent-sage);">➜</div>
         </div>
     </div>
 
     <div id="stage-invoice">
-        <div class="invoice-box">
-            <div class="debt-title">⚠️ PAYMENT REQUIRED</div>
-            <p>Outstanding Debt detected for User: <span id="user-name-target" style="color:white; font-weight:bold;"></span></p>
-            <div class="debt-amount">730 BOTTLECAPS</div>
-            <p style="color: #666; font-size: 0.8rem;">REF: BDAY-EXTORTION-PROTOCOL-v25</p>
-            <button class="pay-btn" onclick="payDebt()">SETTLE DEBT & UNLOCK</button>
+        <div class="receipt-container">
+            <div class="shop-name">THE DEBT COLLECTOR</div>
+            <div style="font-size: 0.8rem; margin-bottom: 10px;">INVOICE #BDAY-2026</div>
+            <div class="receipt-line"></div>
+            
+            <div class="item-row">
+                <span>Friendship Tax</span>
+                <span>$0.00</span>
+            </div>
+            <div class="item-row">
+                <span>Domain Transfer</span>
+                <span>FREE</span>
+            </div>
+            <div class="item-row" style="color: var(--accent-coral); font-weight: bold;">
+                <span>Bottlecaps Owed</span>
+                <span>730.00</span>
+            </div>
+
+            <div class="receipt-line"></div>
+            <div class="total-row">
+                <span>TOTAL DUE:</span>
+                <span>730 BC</span>
+            </div>
+            
+            <button class="pay-btn" onclick="payDebt()">Clear Dues & Proceed</button>
         </div>
     </div>
 
     <div id="stage-dashboard">
         <header>
-            <h1 id="bday-header">HAPPY BIRTHDAY</h1>
-            <div class="subtitle">SYSTEM UNLOCKED. WELCOME TO VERSION <span id="age-target"></span>.0</div>
+            <h1 id="bday-header">Happy Birthday!</h1>
+            <div class="subtitle">Welcome to Version <span id="age-target"></span>.0</div>
         </header>
 
         <div class="dashboard-grid">
             <div class="card">
-                <div class="card-title">System Uptime</div>
+                <div class="card-title">Earth Orbit Timer</div>
                 <div id="uptime-container" class="uptime-digits">
                     </div>
-                <div style="margin-top:15px; color: var(--accent-color); font-size: 0.8rem;">STATUS: ONLINE & THRIVING</div>
             </div>
 
             <div class="card">
-                <div class="card-title">Personality Analysis</div>
+                <div class="card-title">System Composition</div>
                 <canvas id="statsChart"></canvas>
             </div>
 
             <div class="card">
-                <div class="card-title">Release Notes (Changelog)</div>
+                <div class="card-title">Life Updates (Changelog)</div>
                 <div id="changelog-container">
                     </div>
             </div>
@@ -239,21 +293,18 @@
     </div>
 
     <script>
-        // --- CONFIGURATION: EDIT THIS SECTION ---
+        // --- CONFIGURATION ---
         const CONFIG = {
             name: "Jigyasa", 
-            // 1. Go to https://emn178.github.io/online-tools/sha256.html
-            // 2. Type your PIN (e.g. 1234)
-            // 3. Paste the RESULT below.
-            // Example: "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4" is the hash for "1234"
+            // GENERATE A NEW HASH FOR YOUR 6-DIGIT PIN HERE: https://emn178.github.io/online-tools/sha256.html
             pinHash: "2a1e3d5f537ebd5fed5b47da6cbc661a791d30b79a64cd8394bdbd48944bebdf", 
             
-            birthDate: "2000-01-31", // YYYY-MM-DD
+            birthDate: "2000-01-31", 
             age: 25,          
-            stats: [50, 30, 15, 5] // [Sass, Bottlecaps, Genius, Patience] - Must sum to roughly 100
+            stats: [50, 30, 15, 5] // [Sass, Bottlecaps, Genius, Patience]
         };
 
-        // --- HASHING FUNCTION (DO NOT TOUCH) ---
+        // --- HASHING FUNCTION ---
         async function sha256(message) {
             const msgBuffer = new TextEncoder().encode(message);
             const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
@@ -261,61 +312,57 @@
             return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
-        // --- LOGIC ---
+        // --- KEYPAD LOGIC ---
         let currentPin = "";
         
-        // Setup text
-        document.getElementById('user-name-target').innerText = CONFIG.name;
         document.getElementById('age-target').innerText = CONFIG.age;
 
-        // Keypad Functions
         function press(num) {
-            if (currentPin.length < 10) { // Limit length
+            if (currentPin.length < 6) {
                 currentPin += num;
-                updateDisplay();
+                updateDots();
             }
         }
+
         function clearPin() {
             currentPin = "";
-            updateDisplay();
+            updateDots();
         }
-        function updateDisplay() {
-            const display = document.getElementById('pin-display');
-            // Show asterisks or placeholders, not numbers
-            display.innerText = currentPin.split('').map(() => '*').join(' ').padEnd(7, "_ ");
-            display.style.color = "var(--accent-color)";
-            display.style.borderColor = "#333";
+
+        function updateDots() {
+            const dots = document.querySelectorAll('.dot');
+            dots.forEach((dot, index) => {
+                if (index < currentPin.length) {
+                    dot.classList.add('filled');
+                } else {
+                    dot.classList.remove('filled');
+                    dot.classList.remove('error');
+                }
+            });
         }
         
         async function submitPin() {
-            const display = document.getElementById('pin-display');
-            
-            // Check Hash
+            if (currentPin.length !== 6) return;
+
             const inputHash = await sha256(currentPin);
             
             if (inputHash === CONFIG.pinHash) {
-                display.innerText = "ACCESS GRANTED";
-                display.style.color = "var(--accent-color)";
-                setTimeout(() => {
-                    document.getElementById('stage-keypad').style.display = 'none';
-                    document.getElementById('stage-invoice').style.display = 'block';
-                }, 800);
+                // Success Transition
+                document.getElementById('stage-keypad').style.display = 'none';
+                document.getElementById('stage-invoice').style.display = 'block';
             } else {
-                display.innerText = "DENIED";
-                display.style.color = "var(--error-color)";
-                display.style.borderColor = "var(--error-color)";
-                currentPin = "";
+                // Error Animation
+                const dots = document.querySelectorAll('.dot');
+                dots.forEach(dot => dot.classList.add('error'));
                 setTimeout(() => {
-                    display.innerText = "_ _ _ _";
-                    display.style.color = "var(--accent-color)";
-                    display.style.borderColor = "#333";
-                }, 1000);
+                    clearPin();
+                }, 500);
             }
         }
 
-        // Invoice/Birthday Functions
+        // --- INVOICE & CONFETTI ---
         function payDebt() {
-            // Trigger Confetti
+            // Confetti Cannon
             var duration = 3 * 1000;
             var end = Date.now() + duration;
 
@@ -325,14 +372,14 @@
                     angle: 60,
                     spread: 55,
                     origin: { x: 0 },
-                    colors: ['#00ff9d', '#ffffff']
+                    colors: ['#e0c3fc', '#b7e4c7', '#ffb7b2'] // Pastel confetti
                 });
                 confetti({
                     particleCount: 5,
                     angle: 120,
                     spread: 55,
                     origin: { x: 1 },
-                    colors: ['#00ff9d', '#ffffff']
+                    colors: ['#e0c3fc', '#b7e4c7', '#ffb7b2']
                 });
 
                 if (Date.now() < end) {
@@ -340,18 +387,16 @@
                 }
             }());
 
-            // Switch Screens
+            // Transition
             document.getElementById('stage-invoice').style.display = 'none';
             document.getElementById('stage-dashboard').style.display = 'block';
-            document.body.style.overflow = "auto"; 
             
-            // Init Chart & Timer
             initChart();
             startUptime();
             renderChangelog();
         }
 
-        // Dashboard Functions
+        // --- DASHBOARD FUNCTIONS ---
         function startUptime() {
             const birth = new Date(CONFIG.birthDate);
             setInterval(() => {
@@ -365,11 +410,11 @@
                 const secs = now.getSeconds();
 
                 document.getElementById('uptime-container').innerHTML = `
-                    <div>${years}y</div>
-                    <div>${days}d</div>
-                    <div>${hours}h</div>
-                    <div>${mins}m</div>
-                    <div>${secs}s</div>
+                    <div style="text-align:center">${years}<div class="time-unit">YEARS</div></div>
+                    <div style="text-align:center">${days}<div class="time-unit">DAYS</div></div>
+                    <div style="text-align:center">${hours}<div class="time-unit">HRS</div></div>
+                    <div style="text-align:center">${mins}<div class="time-unit">MINS</div></div>
+                    <div style="text-align:center">${secs}<div class="time-unit">SECS</div></div>
                 `;
             }, 1000);
         }
@@ -379,17 +424,18 @@
             new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Sass', 'Bottlecap Hoarding', 'Genius', 'Patience'],
+                    labels: ['Sass', 'Bottlecaps', 'Genius', 'Patience'],
                     datasets: [{
                         data: CONFIG.stats,
-                        backgroundColor: ['#00ff9d', '#333', '#666', '#fff'],
-                        borderWidth: 0
+                        backgroundColor: ['#e0c3fc', '#b7e4c7', '#ffb7b2', '#a2d2ff'],
+                        borderWidth: 0,
+                        hoverOffset: 10
                     }]
                 },
                 options: {
                     responsive: true,
                     plugins: {
-                        legend: { position: 'bottom', labels: { color: '#888', font: {family: 'Courier New'} } }
+                        legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20, font: {family: 'Quicksand'} } }
                     }
                 }
             });
@@ -397,7 +443,7 @@
 
         function renderChangelog() {
             const notes = [
-                { ver: `v${CONFIG.age}.0`, desc: "Stable Release. Added +1 Wisdom & Grey Hair Support." },
+                { ver: `v${CONFIG.age}.0`, desc: "Stable Release. Added +1 Wisdom & improved style algorithms." },
                 { ver: `v${CONFIG.age - 1}.0`, desc: "Legacy version. Deprecated 'Quarter Life Crisis' module." },
                 { ver: "v1.0", desc: "Initial Launch. Hello World." }
             ];
