@@ -52,7 +52,7 @@
         .key:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); background: #fff; }
         .key:active { transform: scale(0.95); background: var(--accent-lavender); color: white; }
 
-        /* --- STAGE 2: RECEIPT --- */
+        /* --- STAGE 2: INVOICE --- */
         #stage-invoice { display: none; animation: fadeIn 1s ease; }
         .receipt-container {
             background: #fff; padding: 40px; width: 320px;
@@ -123,7 +123,13 @@
         }
         .coupon-title { font-weight: bold; color: var(--text-main); }
         .coupon-desc { font-size: 0.8rem; color: var(--text-light); }
-
+        
+        /* Forecast Styles */
+        .forecast-box { text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
+        .weather-icon { font-size: 4rem; margin-bottom: 10px; animation: float 3s ease-in-out infinite; }
+        .forecast-text { font-size: 1.1rem; color: var(--text-main); font-weight: 600; line-height: 1.5; }
+        
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } 100% { transform: translateX(0); } }
@@ -194,12 +200,12 @@
             <div class="card">
                 <div class="card-title">Gift Coupons</div>
                 <div class="coupon" onclick="redeemCoupon(this)">
-                    <div class="coupon-title">🎟️ Driver Duty</div>
-                    <div class="coupon-desc">Valid for one free ride to anywhere.</div>
+                    <div class="coupon-title">🎁 One Choice Purchase</div>
+                    <div class="coupon-desc">Valid for one purchase of your choice.</div>
                 </div>
                 <div class="coupon" onclick="redeemCoupon(this)">
-                    <div class="coupon-title">🍔 Food Court Immunity</div>
-                    <div class="coupon-desc">You pick the place. I can't complain.</div>
+                    <div class="coupon-title">🗣️ Unlimited Vent Sessions</div>
+                    <div class="coupon-desc">Unquestioned listening without judgment.</div>
                 </div>
                 <div class="coupon" onclick="redeemCoupon(this)">
                     <div class="coupon-title">💻 Tech Support</div>
@@ -208,19 +214,25 @@
             </div>
 
             <div class="card">
-                <div class="card-title">Life Updates</div>
-                <div id="changelog-container"></div>
+                <div class="card-title">Yearly Forecast</div>
+                <div class="forecast-box">
+                    <div class="weather-icon">☀️</div>
+                    <div class="forecast-text">
+                        "Outlook for 25: 100% chance of Main Character Energy. High probability of spontaneous trips and zero regrets."
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
+        // --- CONFIGURATION ---
         const CONFIG = {
             name: "Jigyasa", 
-            pinHash: "2a1e3d5f537ebd5fed5b47da6cbc661a791d30b79a64cd8394bdbd48944bebdf", // PASTE HASH HERE
+            pinHash: "2a1e3d5f537ebd5fed5b47da6cbc661a791d30b79a64cd8394bdbd48944bebdf", // PASTE YOUR 6-DIGIT HASH HERE
             birthDate: "2000-01-31", 
             age: 25,          
-            // Sass(45) + Genius(25) + Main Character(25) + Patience(5) = 100%
+            // Sass(45) + Genius(25) + Chaos(25) + Patience(5)
             stats: [45, 25, 25, 5] 
         };
 
@@ -265,7 +277,7 @@
             }());
             document.getElementById('stage-invoice').style.display = 'none';
             document.getElementById('stage-dashboard').style.display = 'block';
-            initChart(); startUptime(); renderChangelog();
+            initChart(); startUptime();
         }
         function toggleMusic(btn) {
             const audio = document.getElementById('bgm');
@@ -305,16 +317,11 @@
             new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Sass', 'Genius', 'Chaos', 'Patience'],
+                    labels: ['Sass', 'Genius', 'Main Character Energy', 'Patience'],
                     datasets: [{ data: CONFIG.stats, backgroundColor: ['#e0c3fc', '#b7e4c7', '#ffb7b2', '#a2d2ff'], borderWidth: 0, hoverOffset: 10 }]
                 },
                 options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20, font: {family: 'Quicksand'} } } } }
             });
-        }
-        function renderChangelog() {
-            const notes = [{ ver: `v${CONFIG.age}.0`, desc: "Stable Release. Added +1 Wisdom." }, { ver: `v${CONFIG.age - 1}.0`, desc: "Legacy version. Deprecated 'Quarter Life Crisis'." }, { ver: "v1.0", desc: "Initial Launch. Hello World." }];
-            const container = document.getElementById('changelog-container');
-            notes.forEach(note => { container.innerHTML += `<div class="changelog-item"><div class="changelog-ver">${note.ver}</div><div class="changelog-desc">${note.desc}</div></div>`; });
         }
     </script>
 </body>
