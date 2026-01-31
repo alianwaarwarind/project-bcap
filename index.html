@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Access Required</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-color: #0a0a0a;
+            --text-color: #e0e0e0;
+            --accent-color: #00ff9d; /* Neon Green */
+            --error-color: #ff3366;
+            --panel-bg: #111;
+            --font-main: 'Courier New', Courier, monospace;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* --- STAGE 1: KEYPAD --- */
+        #stage-keypad {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            animation: fadeIn 1s ease;
+        }
+
+        .screen {
+            background: #000;
+            border: 1px solid #333;
+            color: var(--accent-color);
+            padding: 15px;
+            width: 200px;
+            text-align: center;
+            font-size: 1.5rem;
+            letter-spacing: 5px;
+            margin-bottom: 10px;
+            box-shadow: 0 0 10px rgba(0, 255, 157, 0.2);
+        }
+
+        .keypad-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .key {
+            background: var(--panel-bg);
+            border: 1px solid #333;
+            color: #fff;
+            padding: 20px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 60px;
+            text-align: center;
+            user-select: none;
+        }
+
+        .key:hover { background: #222; border-color: var(--accent-color); }
+        .key:active { background: var(--accent-color); color: #000; }
+
+        /* --- STAGE 2: INVOICE --- */
+        #stage-invoice {
+            display: none;
+            text-align: center;
+            max-width: 600px;
+            animation: fadeIn 1s ease;
+        }
+
+        .invoice-box {
+            border: 2px dashed var(--error-color);
+            padding: 40px;
+            background: #1a0505;
+            position: relative;
+        }
+
+        .debt-title { font-size: 2rem; color: var(--error-color); margin-bottom: 10px; }
+        .debt-amount { font-size: 4rem; font-weight: bold; margin: 20px 0; }
+        
+        .pay-btn {
+            background: var(--error-color);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-family: var(--font-main);
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            animation: pulse 2s infinite;
+        }
+
+        /* --- STAGE 3: DASHBOARD --- */
+        #stage-dashboard {
+            display: none;
+            width: 90%;
+            max-width: 1000px;
+            height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 1s ease;
+            padding-bottom: 50px;
+        }
+
+        /* Custom Scrollbar for Dashboard */
+        #stage-dashboard::-webkit-scrollbar { width: 8px; }
+        #stage-dashboard::-webkit-scrollbar-track { background: #000; }
+        #stage-dashboard::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            margin-top: 20px;
+        }
+
+        h1 { font-size: 3rem; margin: 0; text-transform: uppercase; letter-spacing: 5px; color: var(--accent-color); }
+        .subtitle { color: #666; font-size: 1rem; margin-top: 10px; }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--panel-bg);
+            border: 1px solid #333;
+            padding: 20px;
+            border-radius: 5px;
+        }
+
+        .card-title {
+            color: #888;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 5px;
+        }
+
+        /* Uptime Counter Styles */
+        .uptime-digits {
+            font-size: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            font-variant-numeric: tabular-nums;
+            font-weight: bold;
+            color: #fff;
+        }
+        
+        /* Changelog Styles */
+        .changelog-item { margin-bottom: 15px; border-left: 2px solid var(--accent-color); padding-left: 10px; }
+        .changelog-ver { color: var(--accent-color); font-weight: bold; margin-bottom: 4px; }
+        .changelog-desc { font-size: 0.9rem; color: #ccc; }
+
+        /* Animations */
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        /* Responsive Tweaks */
+        @media (max-width: 600px) {
+            h1 { font-size: 2rem; }
+            .debt-amount { font-size: 3rem; }
+            .uptime-digits { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="stage-keypad">
+        <div style="margin-bottom: 10px; color: #555;">SECURITY CHECKPOINT</div>
+        <div class="screen" id="pin-display">_ _ _ _</div>
+        <div class="keypad-grid">
+            <div class="key" onclick="press(1)">1</div>
+            <div class="key" onclick="press(2)">2</div>
+            <div class="key" onclick="press(3)">3</div>
+            <div class="key" onclick="press(4)">4</div>
+            <div class="key" onclick="press(5)">5</div>
+            <div class="key" onclick="press(6)">6</div>
+            <div class="key" onclick="press(7)">7</div>
+            <div class="key" onclick="press(8)">8</div>
+            <div class="key" onclick="press(9)">9</div>
+            <div class="key" onclick="clearPin()">C</div>
+            <div class="key" onclick="press(0)">0</div>
+            <div class="key" onclick="submitPin()">⏎</div>
+        </div>
+    </div>
+
+    <div id="stage-invoice">
+        <div class="invoice-box">
+            <div class="debt-title">⚠️ PAYMENT REQUIRED</div>
+            <p>Outstanding Debt detected for User: <span id="user-name-target" style="color:white; font-weight:bold;"></span></p>
+            <div class="debt-amount">730 BOTTLECAPS</div>
+            <p style="color: #666; font-size: 0.8rem;">REF: BDAY-EXTORTION-PROTOCOL-v25</p>
+            <button class="pay-btn" onclick="payDebt()">SETTLE DEBT & UNLOCK</button>
+        </div>
+    </div>
+
+    <div id="stage-dashboard">
+        <header>
+            <h1 id="bday-header">HAPPY BIRTHDAY</h1>
+            <div class="subtitle">SYSTEM UNLOCKED. WELCOME TO VERSION <span id="age-target"></span>.0</div>
+        </header>
+
+        <div class="dashboard-grid">
+            <div class="card">
+                <div class="card-title">System Uptime</div>
+                <div id="uptime-container" class="uptime-digits">
+                    </div>
+                <div style="margin-top:15px; color: var(--accent-color); font-size: 0.8rem;">STATUS: ONLINE & THRIVING</div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Personality Analysis</div>
+                <canvas id="statsChart"></canvas>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Release Notes (Changelog)</div>
+                <div id="changelog-container">
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIGURATION: EDIT THIS SECTION ---
+        const CONFIG = {
+            name: "Jigyasa", 
+            // 1. Go to https://emn178.github.io/online-tools/sha256.html
+            // 2. Type your PIN (e.g. 1234)
+            // 3. Paste the RESULT below.
+            // Example: "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4" is the hash for "1234"
+            pinHash: "2a1e3d5f537ebd5fed5b47da6cbc661a791d30b79a64cd8394bdbd48944bebdf", 
+            
+            birthDate: "2000-01-31", // YYYY-MM-DD
+            age: 25,          
+            stats: [50, 30, 15, 5] // [Sass, Bottlecaps, Genius, Patience] - Must sum to roughly 100
+        };
+
+        // --- HASHING FUNCTION (DO NOT TOUCH) ---
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        // --- LOGIC ---
+        let currentPin = "";
+        
+        // Setup text
+        document.getElementById('user-name-target').innerText = CONFIG.name;
+        document.getElementById('age-target').innerText = CONFIG.age;
+
+        // Keypad Functions
+        function press(num) {
+            if (currentPin.length < 10) { // Limit length
+                currentPin += num;
+                updateDisplay();
+            }
+        }
+        function clearPin() {
+            currentPin = "";
+            updateDisplay();
+        }
+        function updateDisplay() {
+            const display = document.getElementById('pin-display');
+            // Show asterisks or placeholders, not numbers
+            display.innerText = currentPin.split('').map(() => '*').join(' ').padEnd(7, "_ ");
+            display.style.color = "var(--accent-color)";
+            display.style.borderColor = "#333";
+        }
+        
+        async function submitPin() {
+            const display = document.getElementById('pin-display');
+            
+            // Check Hash
+            const inputHash = await sha256(currentPin);
+            
+            if (inputHash === CONFIG.pinHash) {
+                display.innerText = "ACCESS GRANTED";
+                display.style.color = "var(--accent-color)";
+                setTimeout(() => {
+                    document.getElementById('stage-keypad').style.display = 'none';
+                    document.getElementById('stage-invoice').style.display = 'block';
+                }, 800);
+            } else {
+                display.innerText = "DENIED";
+                display.style.color = "var(--error-color)";
+                display.style.borderColor = "var(--error-color)";
+                currentPin = "";
+                setTimeout(() => {
+                    display.innerText = "_ _ _ _";
+                    display.style.color = "var(--accent-color)";
+                    display.style.borderColor = "#333";
+                }, 1000);
+            }
+        }
+
+        // Invoice/Birthday Functions
+        function payDebt() {
+            // Trigger Confetti
+            var duration = 3 * 1000;
+            var end = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ['#00ff9d', '#ffffff']
+                });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ['#00ff9d', '#ffffff']
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+
+            // Switch Screens
+            document.getElementById('stage-invoice').style.display = 'none';
+            document.getElementById('stage-dashboard').style.display = 'block';
+            document.body.style.overflow = "auto"; 
+            
+            // Init Chart & Timer
+            initChart();
+            startUptime();
+            renderChangelog();
+        }
+
+        // Dashboard Functions
+        function startUptime() {
+            const birth = new Date(CONFIG.birthDate);
+            setInterval(() => {
+                const now = new Date();
+                const diff = now - birth;
+                
+                const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
+                const days = Math.floor((diff % (1000 * 60 * 60 * 24 * 365.25)) / (1000 * 60 * 60 * 24));
+                const hours = now.getHours();
+                const mins = now.getMinutes();
+                const secs = now.getSeconds();
+
+                document.getElementById('uptime-container').innerHTML = `
+                    <div>${years}y</div>
+                    <div>${days}d</div>
+                    <div>${hours}h</div>
+                    <div>${mins}m</div>
+                    <div>${secs}s</div>
+                `;
+            }, 1000);
+        }
+
+        function initChart() {
+            const ctx = document.getElementById('statsChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Sass', 'Bottlecap Hoarding', 'Genius', 'Patience'],
+                    datasets: [{
+                        data: CONFIG.stats,
+                        backgroundColor: ['#00ff9d', '#333', '#666', '#fff'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: '#888', font: {family: 'Courier New'} } }
+                    }
+                }
+            });
+        }
+
+        function renderChangelog() {
+            const notes = [
+                { ver: `v${CONFIG.age}.0`, desc: "Stable Release. Added +1 Wisdom & Grey Hair Support." },
+                { ver: `v${CONFIG.age - 1}.0`, desc: "Legacy version. Deprecated 'Quarter Life Crisis' module." },
+                { ver: "v1.0", desc: "Initial Launch. Hello World." }
+            ];
+            
+            const container = document.getElementById('changelog-container');
+            notes.forEach(note => {
+                container.innerHTML += `
+                    <div class="changelog-item">
+                        <div class="changelog-ver">${note.ver}</div>
+                        <div class="changelog-desc">${note.desc}</div>
+                    </div>
+                `;
+            });
+        }
+    </script>
+</body>
+</html>
